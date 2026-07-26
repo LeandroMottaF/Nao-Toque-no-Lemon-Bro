@@ -1,0 +1,114 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: #1a1a1a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: background-color 0.4s ease;
+  position: relative;
+}
+
+/* Esconde o cursor verdadeiro do sistema operacional */
+body.travar-mouse, body.travar-mouse #limao {
+  cursor: none !important;
+}
+
+.game-container {
+  display: flex;
+  flex-direction: column; /* Empilha o texto em cima e o limao embaixo */
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  gap: 20px; /* Distancia entre o texto e o limao */
+}
+
+/* Estilo para a frase ficar visivel no fundo escuro */
+#titulo {
+  color: #ffffff;
+  font-family: Arial, sans-serif;
+  font-size: 2rem;
+  text-align: center;
+  pointer-events: none; /* Impede que o texto atrapalhe os cliques no limao */
+}
+
+/* Cursor falso com transicao para o efeito de retorno suave (ima) */
+#cursor-falso {
+  width: 12px;
+  height: 19px;
+  background-color: white;
+  border: 1px solid black;
+  clip-path: polygon(0 0, 100% 70%, 50% 70%, 50% 100%);
+  display: none;
+  position: absolute;
+  z-index: 9999;
+  pointer-events: none;
+  
+  /* Efeito de atracao magnetica retornando ao centro */
+  transition: left 0.15s ease-out, top 0.15s ease-out;
+}
+
+body.travar-mouse #cursor-falso {
+  display: block;
+}
+
+#limao {
+  width: 350px;
+  height: auto;
+  cursor: pointer;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  transition: transform 0.05s ease;
+  position: relative;
+}
+
+#limao:active {
+  transform: scale(0.95);
+}
+
+.chacoalhar {
+  animation: tremor 0.08s infinite;
+}
+
+@keyframes tremor {
+  0% { transform: translate(2px, 2px) rotate(0deg); }
+  25% { transform: translate(-2px, -2px) rotate(-1deg); }
+  50% { transform: translate(-3px, 1px) rotate(1deg); }
+  75% { transform: translate(3px, -1px) rotate(0deg); }
+  100% { transform: translate(1px, 2px) rotate(-1deg); }
+}
+
+#limao.susto-limao {
+  width: 85vw;
+  max-width: 850px;
+  cursor: default;
+  animation: tremor-violento 0.04s infinite;
+}
+
+@keyframes tremor-violento {
+  0% { transform: translate(12px, 12px) scale(1.05); }
+  25% { transform: translate(-12px, -8px) scale(0.97); }
+  50% { transform: translate(-15px, 10px) scale(1.03); }
+  75% { transform: translate(10px, -12px) scale(0.98); }
+  100% { transform: translate(12px, -10px) scale(1.05); }
+}
+
+.susto-bg {
+  animation: piscar-fundo 0.08s infinite !important;
+}
+
+@keyframes piscar-fundo {
+  0% { background-color: #ff0000; }
+  50% { background-color: #000000; }
+  100% { background-color: #8b0000; }
+}
