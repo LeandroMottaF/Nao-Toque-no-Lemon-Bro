@@ -3,22 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lemon Bro</title>
-  <link rel="stylesheet" href="Style.css">
+  <title>Nao toque no Lemon bro</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
- 
+  <!-- Cursor Falso em Pixel Art -->
+  <div id="cursor-falso"></div>
+
+  <!-- ELEMENTOS DE AUDIO NATIVOS (Garante reproducao no 1º clique) -->
+  <audio id="som-boca" src="assets/som-boca.mp3" preload="auto"></audio>
+  <audio id="som-risada" src="assets/som-risada.mp3" preload="auto" loop></audio>
+  <audio id="som-jumpscare" src="assets/som-jumpscare.mp3" preload="auto" loop></audio>
 
   <div class="game-container">
-     <h1 id="titulo"> Não toque no Lemon Bro </h1>
+    <h1 id="titulo">Nao toque no Lemon bro</h1>
     <img id="limao" src="assets/frame_1.png" alt="Lemon Bro" draggable="false">
   </div>
 
-  <div id="cursor-falso"></div>
-
-  <audio id="som-susto" src="assets/grito.mp3" preload="auto"></audio>
-
-  <script src="Script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
