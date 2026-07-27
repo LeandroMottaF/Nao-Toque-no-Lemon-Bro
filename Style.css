@@ -4,6 +4,11 @@
   padding: 0;
 }
 
+/* Oculta o cursor real do sistema em TODA a pagina desde o inicio */
+body, body * {
+  cursor: none !important;
+}
+
 body {
   background-color: #1a1a1a;
   display: flex;
@@ -18,54 +23,45 @@ body {
   position: relative;
 }
 
-/* Esconde o cursor verdadeiro do sistema operacional */
-body.travar-mouse, body.travar-mouse #limao {
-  cursor: none !important;
-}
-
 .game-container {
   display: flex;
-  flex-direction: column; /* Empilha o texto em cima e o limao embaixo */
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 100%;
   height: 100%;
-  gap: 20px; /* Distancia entre o texto e o limao */
+  gap: 20px;
 }
 
-/* Estilo para a frase ficar visivel no fundo escuro */
+/* Cursor Falso estilizado no estilo classico de Pixel Art / Retro */
+#cursor-falso {
+  width: 18px;
+  height: 28px;
+  background-color: white;
+  border: 1px solid black;
+  clip-path: polygon(0 0, 100% 70%, 50% 70%, 50% 100%);
+  display: block; /* Visivel desde o inicio */
+  position: absolute;
+  z-index: 9999;
+  pointer-events: none; /* Garante que os cliques atravessem para o limao */
+}
+
+/* Quando o mouse travar no frame 13, adicionamos a transicao de ima de retorno */
+body.travar-mouse #cursor-falso {
+  transition: left 0.15s ease-out, top 0.15s ease-out;
+}
+
 #titulo {
   color: #ffffff;
   font-family: Arial, sans-serif;
   font-size: 2rem;
   text-align: center;
-  pointer-events: none; /* Impede que o texto atrapalhe os cliques no limao */
-}
-
-/* Cursor falso com transicao para o efeito de retorno suave (ima) */
-#cursor-falso {
-  width: 12px;
-  height: 19px;
-  background-color: white;
-  border: 1px solid black;
-  clip-path: polygon(0 0, 100% 70%, 50% 70%, 50% 100%);
-  display: none;
-  position: absolute;
-  z-index: 9999;
   pointer-events: none;
-  
-  /* Efeito de atracao magnetica retornando ao centro */
-  transition: left 0.15s ease-out, top 0.15s ease-out;
-}
-
-body.travar-mouse #cursor-falso {
-  display: block;
 }
 
 #limao {
   width: 350px;
   height: auto;
-  cursor: pointer;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
   transition: transform 0.05s ease;
@@ -89,9 +85,8 @@ body.travar-mouse #cursor-falso {
 }
 
 #limao.susto-limao {
-  width: 85vw;
-  max-width: 850px;
-  cursor: default;
+  width: 90vw;
+  max-width: 1000px;
   animation: tremor-violento 0.04s infinite;
 }
 

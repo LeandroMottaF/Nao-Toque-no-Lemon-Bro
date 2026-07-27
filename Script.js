@@ -3,10 +3,19 @@ let intervaloRisada = null;
 let mouseTravado = false;
 let animandoBoca = false;
 let frameAtual = 1;
+let risadaIniciada = false;
 
 const limao = document.getElementById('limao');
 const cursorFalso = document.getElementById('cursor-falso');
-const somSusto = document.getElementById('som-susto');
+
+// Criacao dos objetos de audio
+const somBoca = new Audio('assets/som-boca.mp3');
+const somRisada = new Audio('assets/som-risada.mp3');
+const somJumpscare = new Audio('assets/som-jumpscare.mp3');
+
+// Configura os audios que precisam rodar em loop
+somRisada.loop = true;
+somJumpscare.loop = true;
 
 // Pre-carregamento das 17 imagens
 for (let i = 1; i <= 17; i++) {
@@ -14,10 +23,22 @@ for (let i = 1; i <= 17; i++) {
   img.src = `assets/frame_${i}.png`;
 }
 
-// Atualiza a imagem exibida
+// Funcao auxiliar para tocar o som de abrir a boca sem atrasos
+function tocarSomBoca() {
+  somBoca.currentTime = 0;
+  somBoca.play();
+}
+
+// Atualiza a imagem exibida na tela e controla eventos por frame
 function setFrame(numero) {
   frameAtual = numero;
   limao.src = `assets/frame_${numero}.png`;
+
+  // Dispara a risada maligna em loop assim que atinge o frame 8
+  if (frameAtual >= 8 && !risadaIniciada) {
+    risadaIniciada = true;
+    somRisada.play();
+  }
 
   // Fundo vermelho gradual a partir do frame 7 ate o 13
   if (frameAtual >= 7 && frameAtual <= 13) {
@@ -26,7 +47,7 @@ function setFrame(numero) {
     document.body.style.backgroundColor = `hsl(0, 80%, ${luminosidade}%)`;
   }
 
-  // Ativa a trava visual do mouse APENAS no frame 13
+  // Ativa a trava visual do mouse no frame 13
   if (frameAtual >= 13 && !mouseTravado) {
     mouseTravado = true;
     document.body.classList.add('travar-mouse');
@@ -34,7 +55,7 @@ function setFrame(numero) {
   }
 }
 
-// Funcao para rodar uma sequencia automatica de frames
+// Funcao para rodar uma sequencia automatica de frames (boca abrindo e fechando)
 function rodarSequenciaAutomatica(framesArray, velocidadeMs, callbackFinal) {
   animandoBoca = true;
   let idx = 0;
@@ -62,46 +83,48 @@ function retornarCursorParaOCentro() {
   cursorFalso.style.top = `${centroY}px`;
 }
 
-// Permite mover o mouse mas puxa o cursor de volta (efeito ima)
+// Acompanha o mouse real o tempo todo. Apos o frame 13, puxa de volta ao centro (ima)
 document.addEventListener('mousemove', (e) => {
-  if (!mouseTravado) return;
-
   cursorFalso.style.left = `${e.clientX}px`;
   cursorFalso.style.top = `${e.clientY}px`;
 
-  setTimeout(() => {
-    retornarCursorParaOCentro();
-  }, 100);
+  if (mouseTravado) {
+    setTimeout(() => {
+      retornarCursorParaOCentro();
+    }, 100);
+  }
 });
 
-// Evento principal do clique
+// Evento principal do clique no limao
 limao.addEventListener('click', () => {
-  // Impede cliques durante a animacao automatica ou apos o susto
   if (animandoBoca || cliques >= 20) return;
 
   cliques++;
 
-  // ESTAGIO 1: Frame 2 -> Avanca automaticamente ate o 3
+  // ESTAGIO 1: Frame 2 (Abre boca + som) -> Avanca automaticamente ate o 3
   if (cliques === 1) {
+    tocarSomBoca();
     setFrame(2);
     rodarSequenciaAutomatica([2, 3], 120);
   }
-  // ESTAGIO 2: Frame 4 -> Avanca automaticamente pro 5
+  // ESTAGIO 2: Frame 4 (Abre boca + som) -> Avanca automaticamente pro 5
   else if (cliques === 2) {
+    tocarSomBoca();
     setFrame(4);
     rodarSequenciaAutomatica([4, 5], 120);
   }
-  // ESTAGIO 3: Frame 6 (boca abre) -> Avanca AUTOMATICAMENTE para o 7 (boca fecha + fundo vermelho inicia)
+  // ESTAGIO 3: Frame 6 (Abre boca + som) -> Avanca pro 7 (boca fecha + fundo vermelho)
   else if (cliques === 3) {
+    tocarSomBoca();
     setFrame(6);
     rodarSequenciaAutomatica([6, 7], 120);
   }
-  // ESTAGIO 4: Frame 8 -> Avanca automaticamente ate o 13 + Tremor + Trava no Mouse
+  // ESTAGIO 4: Frame 8 -> Avanca ate o 13 + Tremor + Risada no frame 8 + Trava no Mouse no 13
   else if (cliques === 4) {
     limao.classList.add('chacoalhar');
     rodarSequenciaAutomatica([8, 9, 10, 11, 12, 13], 100);
   }
-  // ESTAGIO 5: O SUSTO FINAL
+  // ESTAGIO 5: O SUSTO FINAL (Jumpscare)
   else if (cliques >= 5) {
     dispararSusto();
   }
@@ -115,9 +138,15 @@ function dispararSusto() {
   limao.classList.add('susto-limao');
   document.body.classList.add('susto-bg');
 
-  if (somSusto) somSusto.play();
+  // Para a risada
+  somRisada.pause();
+  somRisada.currentTime = 0;
 
-  // Loop da Risada Maligna (frames 14 a 17)
+  // Toca apenas o som do jumpscare em loop
+  somJumpscare.currentTime = 0;
+  somJumpscare.play();
+
+  // Loop visual da Risada Maligna no final (frames 14 a 17)
   const framesRisada = [14, 15, 16, 17];
   let indice = 0;
 
