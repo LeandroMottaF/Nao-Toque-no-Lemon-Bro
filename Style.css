@@ -94,7 +94,7 @@ body.travar-mouse #cursor-falso {
 }
 
 .susto-bg {
-  animation: piscar-fundo 5.0s infinite !important;
+  animation: piscar-fundo 0.8s infinite !important;
 }
 
 @keyframes piscar-fundo {
