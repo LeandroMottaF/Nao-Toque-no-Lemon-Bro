@@ -4,11 +4,20 @@ let mouseTravado = false;
 let animandoBoca = false;
 let frameAtual = 1;
 let risadaIniciada = false;
+let audiosLiberados = false;
+
+// Detecta se o dispositivo e celular ou tela touch
+const eDispositivoTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
 
 const limao = document.getElementById('limao');
 const cursorFalso = document.getElementById('cursor-falso');
 
-// Criacao dos objetos de audio
+// Se for celular ou touch, remove o cursor falso do HTML de forma definitiva
+if (eDispositivoTouch && cursorFalso) {
+  cursorFalso.remove();
+}
+
+// Criacao dos objetos de audio com caminhos relativos
 const somBoca = new Audio('assets/som-boca.mp3');
 const somRisada = new Audio('assets/som-risada.mp3');
 const somJumpscare = new Audio('assets/som-jumpscare.mp3');
@@ -16,6 +25,22 @@ const somJumpscare = new Audio('assets/som-jumpscare.mp3');
 // Configura os audios que precisam rodar em loop
 somRisada.loop = true;
 somJumpscare.loop = true;
+
+// Funcao para destravar o contexto de audio do navegador no primeiro clique
+function liberarAudios() {
+  if (audiosLiberados) return;
+  
+  [somBoca, somRisada, somJumpscare].forEach(audio => {
+    audio.play().then(() => {
+      audio.pause();
+      audio.currentTime = 0;
+    }).catch(e => {
+      // Ignora restricoes iniciais
+    });
+  });
+
+  audiosLiberados = true;
+}
 
 // Pre-carregamento das 17 imagens
 for (let i = 1; i <= 17; i++) {
@@ -47,8 +72,8 @@ function setFrame(numero) {
     document.body.style.backgroundColor = `hsl(0, 80%, ${luminosidade}%)`;
   }
 
-  // Ativa a trava visual do mouse no frame 13
-  if (frameAtual >= 13 && !mouseTravado) {
+  // Ativa a trava visual do mouse no frame 13 APENAS SE NAO FOR TOUCH
+  if (frameAtual >= 13 && !mouseTravado && !eDispositivoTouch) {
     mouseTravado = true;
     document.body.classList.add('travar-mouse');
     retornarCursorParaOCentro();
@@ -72,9 +97,9 @@ function rodarSequenciaAutomatica(framesArray, velocidadeMs, callbackFinal) {
   }, velocidadeMs);
 }
 
-// Posiciona o cursor no centro do limao
+// Posiciona o cursor no centro do limao (Apenas para Desktop)
 function retornarCursorParaOCentro() {
-  if (!mouseTravado) return;
+  if (!mouseTravado || eDispositivoTouch || !cursorFalso) return;
   const rect = limao.getBoundingClientRect();
   const centroX = rect.left + (rect.width / 2);
   const centroY = rect.top + (rect.height / 2);
@@ -83,8 +108,10 @@ function retornarCursorParaOCentro() {
   cursorFalso.style.top = `${centroY}px`;
 }
 
-// Acompanha o mouse real o tempo todo. Apos o frame 13, puxa de volta ao centro (ima)
+// Acompanha o mouse real o tempo todo (Apenas para Desktop)
 document.addEventListener('mousemove', (e) => {
+  if (eDispositivoTouch || !cursorFalso) return;
+
   cursorFalso.style.left = `${e.clientX}px`;
   cursorFalso.style.top = `${e.clientY}px`;
 
@@ -97,6 +124,8 @@ document.addEventListener('mousemove', (e) => {
 
 // Evento principal do clique no limao
 limao.addEventListener('click', () => {
+  liberarAudios();
+
   if (animandoBoca || cliques >= 20) return;
 
   cliques++;
