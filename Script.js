@@ -4,7 +4,6 @@ let mouseTravado = false;
 let animandoBoca = false;
 let frameAtual = 1;
 let risadaIniciada = false;
-let audiosLiberados = false;
 
 // Detecta se o dispositivo e celular ou possui tela touch
 const eDispositivoTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.matchMedia("(pointer: coarse)").matches);
@@ -12,30 +11,14 @@ const eDispositivoTouch = ('ontouchstart' in window) || (navigator.maxTouchPoint
 const limao = document.getElementById('limao');
 const cursorFalso = document.getElementById('cursor-falso');
 
+// Captura dos elementos de audio declarados no HTML
+const somBoca = document.getElementById('som-boca');
+const somRisada = document.getElementById('som-risada');
+const somJumpscare = document.getElementById('som-jumpscare');
+
 // Se for celular/touch, remove o cursor falso do HTML de forma definitiva
 if (eDispositivoTouch && cursorFalso) {
   cursorFalso.remove();
-}
-
-// Criacao dos objetos de audio
-const somBoca = new Audio('assets/som-boca.mp3');
-const somRisada = new Audio('assets/som-risada.mp3');
-const somJumpscare = new Audio('assets/som-jumpscare.mp3');
-
-// Configura os audios que precisam rodar em loop
-somRisada.loop = true;
-somJumpscare.loop = true;
-
-// Funcao para destravar o contexto de audio do navegador sem interferir no primeiro som
-function liberarAudios() {
-  if (audiosLiberados) return;
-
-  // Destrava a politica de autoplay carregando os audios em segundo plano
-  [somBoca, somRisada, somJumpscare].forEach(audio => {
-    audio.load();
-  });
-
-  audiosLiberados = true;
 }
 
 // Pre-carregamento das 17 imagens
@@ -44,12 +27,10 @@ for (let i = 1; i <= 17; i++) {
   img.src = `assets/frame_${i}.png`;
 }
 
-// Funcao auxiliar para tocar o som de abrir a boca sem atrasos
+// Funcao auxiliar para tocar o som de abrir a boca sem atrasos no 1º clique
 function tocarSomBoca() {
   somBoca.currentTime = 0;
-  somBoca.play().catch(e => {
-    console.log("Aguardando interacao para reproduzir audio:", e);
-  });
+  somBoca.play();
 }
 
 // Atualiza a imagem exibida na tela e controla eventos por frame
@@ -78,7 +59,7 @@ function setFrame(numero) {
   }
 }
 
-// Funcao para rodar uma sequencia automatica de frames (boca abrindo e fechando)
+// Funcao para rodar uma sequencia automatica de frames
 function rodarSequenciaAutomatica(framesArray, velocidadeMs, callbackFinal) {
   animandoBoca = true;
   let idx = 0;
@@ -116,14 +97,12 @@ document.addEventListener('mousemove', (e) => {
   if (mouseTravado) {
     setTimeout(() => {
       retornarCursorParaOCentro();
-    }, 5);
+    }, 15);
   }
 });
 
 // Evento principal do clique no limao
 limao.addEventListener('click', () => {
-  liberarAudios();
-
   if (animandoBoca || cliques >= 20) return;
 
   cliques++;
