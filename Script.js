@@ -26,17 +26,13 @@ const somJumpscare = new Audio('assets/som-jumpscare.mp3');
 somRisada.loop = true;
 somJumpscare.loop = true;
 
-// Funcao para destravar o contexto de audio do navegador no primeiro clique (GitHub Pages)
+// Funcao para destravar o contexto de audio do navegador sem interferir no primeiro som
 function liberarAudios() {
   if (audiosLiberados) return;
-  
+
+  // Destrava a politica de autoplay carregando os audios em segundo plano
   [somBoca, somRisada, somJumpscare].forEach(audio => {
-    audio.play().then(() => {
-      audio.pause();
-      audio.currentTime = 0;
-    }).catch(e => {
-      // Ignora restricoes iniciais
-    });
+    audio.load();
   });
 
   audiosLiberados = true;
@@ -51,7 +47,9 @@ for (let i = 1; i <= 17; i++) {
 // Funcao auxiliar para tocar o som de abrir a boca sem atrasos
 function tocarSomBoca() {
   somBoca.currentTime = 0;
-  somBoca.play();
+  somBoca.play().catch(e => {
+    console.log("Aguardando interacao para reproduzir audio:", e);
+  });
 }
 
 // Atualiza a imagem exibida na tela e controla eventos por frame
@@ -118,7 +116,7 @@ document.addEventListener('mousemove', (e) => {
   if (mouseTravado) {
     setTimeout(() => {
       retornarCursorParaOCentro();
-    }, 100);
+    }, 15);
   }
 });
 
