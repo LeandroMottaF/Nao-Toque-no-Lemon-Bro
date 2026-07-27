@@ -4,6 +4,7 @@ let mouseTravado = false;
 let animandoBoca = false;
 let frameAtual = 1;
 let risadaIniciada = false;
+let audiosLiberados = false;
 
 const limao = document.getElementById('limao');
 const cursorFalso = document.getElementById('cursor-falso');
@@ -154,4 +155,28 @@ function dispararSusto() {
     setFrame(framesRisada[indice]);
     indice = (indice + 1) % framesRisada.length;
   }, 80);
+  // Funcao para destravar os audios no navegador (exigido em sites hospedados)
+function liberarAudios() {
+  if (audiosLiberados) return;
+  
+  [somBoca, somRisada, somJumpscare].forEach(audio => {
+    audio.play().then(() => {
+      audio.pause();
+      audio.currentTime = 0;
+    }).catch(e => {
+      // Ignora erros silenciosos de tentativa inicial
+    });
+  });
+
+  audiosLiberados = true;
+}
+
+// Chame a funcao 'liberarAudios()' logo na PRIMEIRA linha do evento de clique do limao:
+limao.addEventListener('click', () => {
+  liberarAudios(); // <-- ADICIONE ESTA LINHA AQUI NO INICIO
+
+  if (animandoBoca || cliques >= 20) return;
+  // ... resto do seu codigo do clique
+});
+
 }
