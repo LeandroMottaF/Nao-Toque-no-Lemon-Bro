@@ -6,18 +6,18 @@ let frameAtual = 1;
 let risadaIniciada = false;
 let audiosLiberados = false;
 
-// Detecta se o dispositivo e celular ou tela touch
-const eDispositivoTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+// Detecta se o dispositivo e celular ou possui tela touch
+const eDispositivoTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.matchMedia("(pointer: coarse)").matches);
 
 const limao = document.getElementById('limao');
 const cursorFalso = document.getElementById('cursor-falso');
 
-// Se for celular ou touch, remove o cursor falso do HTML de forma definitiva
+// Se for celular/touch, remove o cursor falso do HTML de forma definitiva
 if (eDispositivoTouch && cursorFalso) {
   cursorFalso.remove();
 }
 
-// Criacao dos objetos de audio com caminhos relativos
+// Criacao dos objetos de audio
 const somBoca = new Audio('assets/som-boca.mp3');
 const somRisada = new Audio('assets/som-risada.mp3');
 const somJumpscare = new Audio('assets/som-jumpscare.mp3');
@@ -26,7 +26,7 @@ const somJumpscare = new Audio('assets/som-jumpscare.mp3');
 somRisada.loop = true;
 somJumpscare.loop = true;
 
-// Funcao para destravar o contexto de audio do navegador no primeiro clique
+// Funcao para destravar o contexto de audio do navegador no primeiro clique (GitHub Pages)
 function liberarAudios() {
   if (audiosLiberados) return;
   
@@ -97,9 +97,9 @@ function rodarSequenciaAutomatica(framesArray, velocidadeMs, callbackFinal) {
   }, velocidadeMs);
 }
 
-// Posiciona o cursor no centro do limao (Apenas para Desktop)
+// Posiciona o cursor no centro do limao (Apenas Desktop)
 function retornarCursorParaOCentro() {
-  if (!mouseTravado || eDispositivoTouch || !cursorFalso) return;
+  if (!mouseTravado || eDispositivoTouch || !cursorFalso || !document.body.contains(cursorFalso)) return;
   const rect = limao.getBoundingClientRect();
   const centroX = rect.left + (rect.width / 2);
   const centroY = rect.top + (rect.height / 2);
@@ -108,9 +108,9 @@ function retornarCursorParaOCentro() {
   cursorFalso.style.top = `${centroY}px`;
 }
 
-// Acompanha o mouse real o tempo todo (Apenas para Desktop)
+// Acompanha o mouse real o tempo todo (Apenas Desktop)
 document.addEventListener('mousemove', (e) => {
-  if (eDispositivoTouch || !cursorFalso) return;
+  if (eDispositivoTouch || !cursorFalso || !document.body.contains(cursorFalso)) return;
 
   cursorFalso.style.left = `${e.clientX}px`;
   cursorFalso.style.top = `${e.clientY}px`;
@@ -148,7 +148,7 @@ limao.addEventListener('click', () => {
     setFrame(6);
     rodarSequenciaAutomatica([6, 7], 120);
   }
-  // ESTAGIO 4: Frame 8 -> Avanca ate o 13 + Tremor + Risada no frame 8 + Trava no Mouse no 13
+  // ESTAGIO 4: Frame 8 -> Avanca ate o 13 + Tremor + Risada no frame 8 + Trava no Mouse
   else if (cliques === 4) {
     limao.classList.add('chacoalhar');
     rodarSequenciaAutomatica([8, 9, 10, 11, 12, 13], 100);
