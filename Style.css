@@ -59,7 +59,7 @@ body.travar-mouse #cursor-falso {
   height: auto;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
-  transition: transform 0.05s ease;
+  transition: transform 0.8s ease;
   position: relative;
 }
 
