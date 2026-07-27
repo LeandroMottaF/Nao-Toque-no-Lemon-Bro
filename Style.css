@@ -107,3 +107,15 @@ body.travar-mouse #cursor-falso {
   50% { background-color: #000000; }
   100% { background-color: #8b0000; }
 }
+
+@media (max-width: 768px), (pointer: coarse) {
+  #cursor-falso {
+    display: none !important;
+  }
+  
+  /* Restaura a visibilidade do toque padrão do celular se necessário */
+  body, body * {
+    cursor: auto !important;
+  } 
+
+}
