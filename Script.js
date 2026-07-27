@@ -116,7 +116,7 @@ document.addEventListener('mousemove', (e) => {
   if (mouseTravado) {
     setTimeout(() => {
       retornarCursorParaOCentro();
-    }, 15);
+    }, 5);
   }
 });
 

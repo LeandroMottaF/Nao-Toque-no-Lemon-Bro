@@ -43,7 +43,7 @@ body {
 
 /* Transicao de ima de retorno quando trava */
 body.travar-mouse #cursor-falso {
-  transition: left 0.15s ease-out, top 0.15s ease-out;
+  transition: left 0.05s ease-out, top 0.05s ease-out;
 }
 
 #titulo {
