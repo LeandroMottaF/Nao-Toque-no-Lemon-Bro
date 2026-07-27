@@ -4,11 +4,6 @@
   padding: 0;
 }
 
-/* Oculta o cursor real do sistema em TODA a pagina desde o inicio */
-body, body * {
-  cursor: none !important;
-}
-
 body {
   background-color: #1a1a1a;
   display: flex;
@@ -33,20 +28,20 @@ body {
   gap: 20px;
 }
 
-/* Cursor Falso estilizado no estilo classico de Pixel Art / Retro */
+/* Cursor Falso estilo retro */
 #cursor-falso {
   width: 18px;
   height: 28px;
   background-color: white;
   border: 1px solid black;
   clip-path: polygon(0 0, 100% 70%, 50% 70%, 50% 100%);
-  display: block; /* Visivel desde o inicio */
+  display: block;
   position: absolute;
   z-index: 9999;
-  pointer-events: none; /* Garante que os cliques atravessem para o limao */
+  pointer-events: none;
 }
 
-/* Quando o mouse travar no frame 13, adicionamos a transicao de ima de retorno */
+/* Transicao de ima de retorno quando trava */
 body.travar-mouse #cursor-falso {
   transition: left 0.15s ease-out, top 0.15s ease-out;
 }
@@ -108,14 +103,29 @@ body.travar-mouse #cursor-falso {
   100% { background-color: #8b0000; }
 }
 
-@media (max-width: 768px), (pointer: coarse) {
+/* ==========================================
+   CONFIGURACOES APENAS PARA COMPUTADORES (DESKTOP)
+   ========================================== */
+@media (hover: hover) and (pointer: fine) {
+  /* Oculta o cursor real do sistema apenas no PC */
+  body, body * {
+    cursor: none !important;
+  }
+}
+
+/* ==========================================
+   CONFIGURACOES PARA CELULARES E TABLETS (TOUCH)
+   ========================================== */
+@media (hover: none), (pointer: coarse), (max-width: 768px) {
+  /* Esconde completamente a DIV do cursor falso no celular */
   #cursor-falso {
     display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
   }
-  
-  /* Restaura a visibilidade do toque padrão do celular se necessário */
+
+  /* Restaura o ponteiro padrao do toque */
   body, body * {
     cursor: auto !important;
-  } 
-
+  }
 }
